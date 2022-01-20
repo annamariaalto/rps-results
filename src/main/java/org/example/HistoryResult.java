@@ -1,7 +1,5 @@
 package org.example;
 
-//import java.lang.reflect.Array;
-
 public class HistoryResult {
     private String cursor;
     JSONObject data = new JSONObject();
