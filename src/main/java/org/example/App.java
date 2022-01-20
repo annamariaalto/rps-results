@@ -92,10 +92,10 @@ public class App {
                     }
 
                 } else {
-                    System.out.println("No results.");
+                    System.out.println("The player " + merkki + " has played " + games + " games.");
                 }
             }
-            System.out.println("The player " + merkki + " played " + games + " games.");
+            System.out.println("The player " + merkki + " has played " + games + " games.");
         }
 
     }
