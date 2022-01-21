@@ -3,7 +3,6 @@ package org.example;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.sun.security.jgss.GSSUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -67,6 +66,7 @@ public class App {
 
         if (root.isArray()) {
             int games = 0;
+            int round = 0;
             ArrayNode arrayNode = (ArrayNode) root;
             for (int i = 0 ; i < arrayNode.size(); i++) {
                 JsonNode arrayElement = arrayNode.get(i);
@@ -85,10 +85,32 @@ public class App {
                     //System.out.println(nameText2);
 
                     if (nameText1.equals(merkki) || nameText2.equals(merkki)){
-                        System.out.println();
-                        //System.out.println("***** Player A: ***** " + nameText1);
-                        //System.out.println("***** Player B: ***** " + nameText2);
                         games++;
+                        round++;
+
+                        //Calculate the winner
+                        JsonNode playedA = player1.get("played");
+                        String playedAText = playedA.asText();
+
+                        JsonNode playedB = player2.get("played");
+                        String playedBText = playedB.asText();
+
+                        System.out.println("Results for round no.: " + round);
+                        System.out.println("Player A: " + nameText1 + " played " + playedAText);
+                        System.out.println("Player B: " + nameText2 + " played " + playedBText);
+
+                        String winnerHand = calculateWinner(playedAText, playedBText);
+                        String winner = null;
+                        if (winnerHand.equals("playerA")) {
+                            winner = nameText1;
+                            System.out.println("Winner is " + nameText1 + "!");
+                        } else if (winnerHand.equals("playerB")) {
+                            winner = nameText2;
+                            System.out.println("Winner is " + nameText2 + "!");
+                        } else {
+                            System.out.println("It's a tie!");
+                        }
+                        System.out.println();
                     }
 
                 } else {
@@ -97,7 +119,29 @@ public class App {
             }
             System.out.println("The player " + merkki + " has played " + games + " games.");
         }
+    }
 
+    //Calculate the winner
+    public static String calculateWinner(String playerA, String playerB) {
+        String winner = null;
+
+        if (playerA.equals("ROCK") && (playerB.equals("SCISSORS"))) {
+            winner = "playerA";
+        } else if (playerA.equals("SCISSORS") && (playerB.equals("ROCK"))) {
+            winner = "playerB";
+        } else if (playerA.equals("SCISSORS") && (playerB.equals("PAPER"))) {
+            winner = "playerA";
+        } else if (playerA.equals("PAPER") && (playerB.equals("SCISSORS"))) {
+            winner = "playerB";
+        } else if (playerA.equals("PAPER") && (playerB.equals("ROCK"))) {
+            winner = "playerA";
+        } else if (playerA.equals("ROCK") && (playerB.equals("PAPER"))) {
+            winner = "playerB";
+        } else {
+            winner = "tie";
+        }
+
+        return winner;
     }
 
 
