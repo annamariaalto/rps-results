@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.sun.security.jgss.GSSUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scripting.bsh.BshScriptUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,6 +17,10 @@ import java.util.Scanner;
 
 @SpringBootApplication
 public class App {
+    private static String merkki = null;
+    private static int games;
+    private static int wins;
+    private static double winPercRound;
 
     private static final String POST_API_URL = "https://bad-api-assignment.reaktor.com/rps/history";
 
@@ -63,12 +68,10 @@ public class App {
     public static void personalResults (JsonNode root) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the player's full name: ");
-        String merkki = scanner.nextLine();
+        merkki = scanner.nextLine();
 
         if (root.isArray()) {
-            int games = 0;
             int round = 0;
-            int wins = 0;
             String winner = null;
 
             ArrayNode arrayNode = (ArrayNode) root;
@@ -113,17 +116,17 @@ public class App {
                         }
                         if (merkki.equals(winner)) wins++;
                         System.out.println();
-                    }
-
-                } else {
-                    System.out.println("The player " + merkki + " has played " + games + " games.");
+                    } 
                 }
             }
-
             double winPerc = calculateWinRatio(games, wins);
-            final double winPercRound = (double) Math.round(winPerc * 10) / 10;
-            System.out.println("The player " + merkki + " has played " + games + " games, which of (s)he has won " + wins + ".");
-            System.out.println(merkki + "'s win ratio is " + winPercRound + " %.");
+            winPercRound = (double) Math.round(winPerc * 10) / 10;
+            System.out.println("*** " + winPercRound + " ***");
+
+            printResults();
+
+            /*System.out.println("The player " + merkki + " has played " + games + " games, which of (s)he has won " + wins + ".");
+            System.out.println(merkki + "'s win ratio is " + winPercRound + " %.");*/
         }
     }
 
@@ -159,7 +162,13 @@ public class App {
 
     //Player's most played hand
     public static String mostPlayedHand () {
-
+        //code here
         return null;
+    }
+
+    //Print results
+    public static void printResults () {
+        System.out.println("The player " + merkki + " has played " + games + " games, which of (s)he has won " + wins + ".");
+        System.out.println(merkki + "'s win ratio is " + winPercRound + " %.");
     }
 }
