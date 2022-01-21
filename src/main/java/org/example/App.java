@@ -3,6 +3,7 @@ package org.example;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.sun.security.jgss.GSSUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -67,6 +68,9 @@ public class App {
         if (root.isArray()) {
             int games = 0;
             int round = 0;
+            int wins = 0;
+            String winner = null;
+
             ArrayNode arrayNode = (ArrayNode) root;
             for (int i = 0 ; i < arrayNode.size(); i++) {
                 JsonNode arrayElement = arrayNode.get(i);
@@ -80,9 +84,6 @@ public class App {
 
                     JsonNode name2 = player2.get("name");
                     String nameText2 = name2.asText();
-
-                    //System.out.println(nameText1);
-                    //System.out.println(nameText2);
 
                     if (nameText1.equals(merkki) || nameText2.equals(merkki)){
                         games++;
@@ -100,7 +101,7 @@ public class App {
                         System.out.println("Player B: " + nameText2 + " played " + playedBText);
 
                         String winnerHand = calculateWinner(playedAText, playedBText);
-                        String winner = null;
+
                         if (winnerHand.equals("playerA")) {
                             winner = nameText1;
                             System.out.println("Winner is " + nameText1 + "!");
@@ -110,6 +111,7 @@ public class App {
                         } else {
                             System.out.println("It's a tie!");
                         }
+                        if (merkki.equals(winner)) wins++;
                         System.out.println();
                     }
 
@@ -117,7 +119,11 @@ public class App {
                     System.out.println("The player " + merkki + " has played " + games + " games.");
                 }
             }
-            System.out.println("The player " + merkki + " has played " + games + " games.");
+
+            double winPerc = calculateWinRatio(games, wins);
+            final double winPercRound = (double) Math.round(winPerc * 10) / 10;
+            System.out.println("The player " + merkki + " has played " + games + " games, which of (s)he has won " + wins + ".");
+            System.out.println(merkki + "'s win ratio is " + winPercRound + " %.");
         }
     }
 
@@ -144,5 +150,16 @@ public class App {
         return winner;
     }
 
+    //Calculate the win ratio
+    public static double calculateWinRatio (int games, int wins) {
 
+        double result = ((double) wins/games)*100;
+        return result;
+    }
+
+    //Player's most played hand
+    public static String mostPlayedHand () {
+
+        return null;
+    }
 }
