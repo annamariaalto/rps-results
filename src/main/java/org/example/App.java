@@ -3,10 +3,8 @@ package org.example;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.sun.security.jgss.GSSUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scripting.bsh.BshScriptUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,9 +13,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Scanner;
 
+
 @SpringBootApplication
 public class App {
-    private static String merkki = null;
+    private static String input = "a";
     private static int games;
     private static int wins;
     private static double winPercRound;
@@ -47,11 +46,21 @@ public class App {
         //Handle the data
         JsonNode data = jsonNode.get("data");
 
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+                System.out.println("Enter the player's full name: ");
+                input = scanner.nextLine();
+                if (input.equals("exit")) break;
+
+                personalResults(data, input);
+        }
+        scanner.close();
+
         //traverse(data);
-        personalResults(data);
 
     }
-    //Traverse through array
+    //Traverse through array to check Json
     public static void traverse (JsonNode root) {
         if (root.isArray()) {
             ArrayNode arrayNode = (ArrayNode) root;
@@ -65,10 +74,7 @@ public class App {
     }
 
     //To look individual's results
-    public static void personalResults (JsonNode root) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the player's full name: ");
-        merkki = scanner.nextLine();
+    public static void personalResults (JsonNode root, String name) {
 
         if (root.isArray()) {
             int round = 0;
@@ -88,7 +94,7 @@ public class App {
                     JsonNode name2 = player2.get("name");
                     String nameText2 = name2.asText();
 
-                    if (nameText1.equals(merkki) || nameText2.equals(merkki)){
+                    if (nameText1.equals(name) || nameText2.equals(name)){
                         games++;
                         round++;
 
@@ -99,6 +105,7 @@ public class App {
                         JsonNode playedB = player2.get("played");
                         String playedBText = playedB.asText();
 
+                        System.out.println();
                         System.out.println("Results for round no.: " + round);
                         System.out.println("Player A: " + nameText1 + " played " + playedAText);
                         System.out.println("Player B: " + nameText2 + " played " + playedBText);
@@ -114,19 +121,27 @@ public class App {
                         } else {
                             System.out.println("It's a tie!");
                         }
-                        if (merkki.equals(winner)) wins++;
+                        if (name.equals(winner)) wins++;
                         System.out.println();
-                    } 
+                    }
                 }
             }
             double winPerc = calculateWinRatio(games, wins);
             winPercRound = (double) Math.round(winPerc * 10) / 10;
-            System.out.println("*** " + winPercRound + " ***");
 
             printResults();
 
-            /*System.out.println("The player " + merkki + " has played " + games + " games, which of (s)he has won " + wins + ".");
-            System.out.println(merkki + "'s win ratio is " + winPercRound + " %.");*/
+        }
+        System.out.println("-----------------------");
+        System.out.println("Type 'exit' to stop or press enter to continue.");
+        Scanner scanner = new Scanner(System.in);
+        String readEnter = scanner.nextLine();
+
+        switch (readEnter) {
+            case "":
+                return;
+            case "exit":
+                System.exit(0);
         }
     }
 
@@ -168,7 +183,7 @@ public class App {
 
     //Print results
     public static void printResults () {
-        System.out.println("The player " + merkki + " has played " + games + " games, which of (s)he has won " + wins + ".");
-        System.out.println(merkki + "'s win ratio is " + winPercRound + " %.");
+        System.out.println("The player " + input + " has played " + games + " games, which of (s)he has won " + wins + ".");
+        System.out.println(input + "'s win ratio is " + winPercRound + " %.");
     }
 }

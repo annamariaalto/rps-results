@@ -10,7 +10,7 @@ This project is using only the other endpoint (/rps/history).
 The main purpose of the project was to implement the project as a SpringBoot Application running at local host 8080.
 However, at this point, the project is only running on IDE.
 
-To run to project, run the Main class in App.class.
+To run to project, run the Main class in App.java.
 The project will ask user’s input which can be entered to IDE’s console.
 The project will ask further questions. The results will be displayed on the IDE’s console.
 
